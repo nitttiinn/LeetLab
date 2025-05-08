@@ -34,13 +34,18 @@ export const register = async (req, res) =>{
         };
 
         const hashedPassword = await bcrypt.hash(password, 10); // hash the password using brcypt
+
+        const verfiedToken = crypto.randomBytes(32).toString('hex'); // generate a random token for email verification
+        console.log(verfiedToken); // log the token in the console
          
         const user = await db.user.create({
             data:{
                 name,
                 email,
                 password: hashedPassword, // save the user in the database
-                role: UserRole.USER // set the role of the user to USER
+                role: UserRole.USER, // set the role of the user to USER
+                verificationToken: verfiedToken, // save the verification token in the database
+                verified: false, // set the verified field to false
             }
         });
 
@@ -56,16 +61,6 @@ export const register = async (req, res) =>{
             maxAge: 24*60*60*1000 // cookie will expire in 1 day
         });
 
-        const verfiedToken = crypto.randomBytes(32).toString('hex'); // generate a random token for email verification
-        
-        await db.user.update({
-            where:{
-                id:user.id // update the user in the database with the verification token
-            },
-            data:{
-                verificationToken: verfiedToken // set the verification token in the database
-            }
-        });
 
         // send email to the user with the verification token
         const transporter = nodemailer.createTransport({
@@ -108,14 +103,64 @@ export const register = async (req, res) =>{
         console.log("Some error occured", error); // log the error in the console.
         return res.status(500).json({
             message: "Internal Server Error",
-            err,
+            error,
             sucess: false
         })
     }
 }
 
 export const verify = async (req,res) =>{
+    /*
+    1. get the token from the url
+    2. validate token
+    3. if valid, find the user in the database
+    4. if user found, update the verified to true
+    5. remove verification token from the database
+    6. save the user in the databse
+    7. send the respose to the client
+    */
+    const {token} = req.params; // 1.
 
+    if(!token){ // 2.
+        return res.status(400).json({
+            message: "Invalid token"
+        });
+    };
+
+    try{
+        const user = await db.user.findUnique({
+            where:{
+                verificationToken: token // 3
+            }
+        });
+
+        if(!user){
+            return res.status(400).json({
+                message: "Invalid token"
+            })
+        };
+
+        await db.user.update({ // 6.
+            where:{
+                id: user.id 
+            },
+            data:{
+                verified: true, // 4.
+                verificationToken: null // 5.
+            }
+        });
+
+
+        res.status(200).json({
+            message: "Email verified successfully", // 7.
+        })
+
+    } catch(error){
+        console.log("Some error occured", error);
+        return res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
 }
 
 export const login = async (req, res) =>{
