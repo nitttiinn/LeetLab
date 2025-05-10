@@ -1,7 +1,7 @@
 import express from 'express'; // import express framework , which is used for building web applications in node.js
 import dotenv from 'dotenv'; // import dotenv , which is used for loading environment variables from .env file
 import cookieParser from 'cookie-parser'; // import cookie-parser , which is used for parsing cookies in the request
-import authRoutes from './routes/auth.routes.js'; // Import the auth routes
+import authRoutes from './Routes/auth.routes.js'; // import auth routes from auth.routes.js file
 
 
 dotenv.config(); // load enviroment variables from .env file

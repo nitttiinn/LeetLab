@@ -19,6 +19,12 @@ enum UserRole {
   ADMIN
 }
 
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
 model User {
   id                      String    @id @default(uuid())
   name                    String
@@ -31,4 +37,28 @@ model User {
   verificationTokenExpiry DateTime?
   createdAt               DateTime  @default(now())
   updatedAt               DateTime  @updatedAt
+
+  // relationship
+  problems Problem[]
+}
+
+model Problem {
+  id                String     @id @default(uuid())
+  title             String
+  description       String
+  difficulty        Difficulty
+  tags              String[] // ['tag1', 'tag2', 'tag3']
+  userId            String
+  examples          Json
+  constraints       String
+  hints             String?
+  editorial         String?
+  testcases         Json
+  codeSnippets      Json // why Json? because it can be a String or an array of Strings?
+  referenceSolution Json
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  // relationship 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
