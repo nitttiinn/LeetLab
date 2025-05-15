@@ -51,3 +51,30 @@ export const authMiddleware = async (req, res, next) =>{
         })
     }
 }
+
+export const checkAdmin = async(req,res,next) =>{
+    try {
+        const user = await db.user.findUnique({
+            where:{
+                id: req.user.id
+            },
+            select:{ // Only fetch the required fields,which in this case is role.
+                role: true
+            }
+        });
+
+        if(user.role !== "ADMIN"){
+            return res.status(403).json({
+                success: false,
+                message: "Access denied!, You are not an admin"
+            })
+        };
+        next(); // call the next middleware or route 
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        })
+    }
+}

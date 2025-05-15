@@ -2,6 +2,7 @@ import express from 'express'; // import express framework , which is used for b
 import dotenv from 'dotenv'; // import dotenv , which is used for loading environment variables from .env file
 import cookieParser from 'cookie-parser'; // import cookie-parser , which is used for parsing cookies in the request
 import authRoutes from './Routes/auth.routes.js'; // import auth routes from auth.routes.js file
+import problemRoutes from './routes/problem.routes.js';
 
 
 dotenv.config(); // load enviroment variables from .env file
@@ -18,7 +19,9 @@ app.get('/', (req,res)=>{ // Define a route for the root uRL
     res.send("Hello World! Welcome to the LeetLab 🔥"); // Send the response 
 })
 
-app.use("/api/v1/auth", authRoutes);
+// creating a routes for the application
+app.use("/api/v1/auth", authRoutes); // Define aroute for the auth routes
+app.use("api/v1/problems", problemRoutes); // Define a route for the problem routes
 
 app.listen(port,()=>{
     console.log("Server is running on port 8080");
