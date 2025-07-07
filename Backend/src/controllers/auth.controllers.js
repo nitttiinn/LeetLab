@@ -24,7 +24,6 @@ export const register = async (req, res) =>{
     };
 
     try {
-
         // check if the user already exists in the database
         const existingUser = await db.user.findUnique({ 
             where:{
