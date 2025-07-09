@@ -1,3 +1,4 @@
+// Boiler plate code for auth routes
 import express from 'express';
 import {register,login,logout,check,verify} from '../controllers/auth.controllers.js';
 import { authMiddleware } from '../middleware/auth.middleware.js';
@@ -14,6 +15,6 @@ authRoutes.post('/login', login);
 
 authRoutes.post('/logout',authMiddleware,logout);
 
-authRoutes.post('/profile',authMiddleware,check);
+authRoutes.get('/profile',authMiddleware,check);
 
 export default authRoutes;

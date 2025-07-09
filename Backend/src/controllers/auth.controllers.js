@@ -25,9 +25,9 @@ export const register = async (req, res) =>{
 
     try {
         // check if the user already exists in the database
-        const existingUser = await db.user.findUnique({ 
+        const existingUser = await db.user.findUnique({ // in postgresql, we use db to find the user in the user table in compare to mongodb where we use User.findOne()
             where:{
-                email
+                email // find the user by email
             }
         });
 
@@ -41,20 +41,22 @@ export const register = async (req, res) =>{
         // hash the password using brcypt
         const hashedPassword = await bcrypt.hash(password, 10); 
 
-        const verfiedToken = crypto.randomBytes(32).toString('hex'); // generate a random token for email verification
-        // console.log(verfiedToken); // log the token in the console
-         
+        // Generate a random token for email verification.
+        const verifiedToken = crypto.randomBytes(32).toString('hex'); 
+        // console.log(verifiedToken); // log the token in the console
+
         const newUser = await db.user.create({
             data:{
                 name,
                 email,
                 password: hashedPassword, // save the user in the database
                 role: UserRole.USER, // set the role of the user to USER
-                verificationToken: verfiedToken, // save the verification token in the database
+                verificationToken: verifiedToken, // save the verification token in the database
                 verified: false, // set the verified field to false
             }
         });
 
+        // Generate a JWT token for the user
         const token = jwt.sign({id:newUser.id}, process.env.JWT_SECRET,{
             expiresIn: '1d' // token will expire in 1 day
         });
@@ -115,7 +117,6 @@ export const register = async (req, res) =>{
     }
 }
 
-
 export const verify = async (req,res) =>{
     /*
     1. get the token from the url
@@ -171,7 +172,6 @@ export const verify = async (req,res) =>{
     }
 }
 
-
 export const login = async (req, res) =>{
     /*
     1. get the email and password from the request body
@@ -204,8 +204,8 @@ export const login = async (req, res) =>{
             }
         });
         if(!user){
-            return res.status(400).json({
-                message: "User doesn't exist, register yourself first!"
+            return res.status(401).json({
+                message: "User doesn't exist, Please register first!"
             })
         };
 
@@ -222,7 +222,7 @@ export const login = async (req, res) =>{
         // 5.
         const isPasswordCorrect = await bcrypt.compare(password, user.password);
         if(!isPasswordCorrect){
-            return res.status(400).json({
+            return res.status(401).json({
                 message: "Invalid credentials" 
             });
         };
@@ -267,7 +267,6 @@ export const login = async (req, res) =>{
     }
 }
 
-
 export const logout = async (req, res) =>{
     /*
     how to logout the user
@@ -284,7 +283,7 @@ export const logout = async (req, res) =>{
         })
 
         // 2. 
-        return res.status(200).json({
+        return res.status(204).json({
             message: "Logout Successfully",
             success: true
         })
@@ -306,6 +305,7 @@ export const check = async (req, res) =>{
     3. decode the token to get th user id and email by using jwt.decode() method
     */
    try {
+
         res.status(200).json({
             message: "User authenticated Successfully!",
             user: req.user, // get the user from the request object

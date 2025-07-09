@@ -35,12 +35,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.7.0
- * Query Engine version: 3cff47a7f5d65c3ea74883f1d736e41d68ce91ed
+ * Prisma Client JS version: 6.11.1
+ * Query Engine version: f40f79ec31188888a2e33acda0ecc8fd10a853a9
  */
 Prisma.prismaVersion = {
-  client: "6.7.0",
-  engine: "3cff47a7f5d65c3ea74883f1d736e41d68ce91ed"
+  client: "6.11.1",
+  engine: "f40f79ec31188888a2e33acda0ecc8fd10a853a9"
 }
 
 Prisma.PrismaClientKnownRequestError = PrismaClientKnownRequestError;
@@ -197,22 +197,23 @@ const config = {
     "schemaEnvPath": "../../../.env"
   },
   "relativePath": "../../../prisma",
-  "clientVersion": "6.7.0",
-  "engineVersion": "3cff47a7f5d65c3ea74883f1d736e41d68ce91ed",
+  "clientVersion": "6.11.1",
+  "engineVersion": "f40f79ec31188888a2e33acda0ecc8fd10a853a9",
   "datasourceNames": [
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
-        "fromEnvVar": "DATABASE_URL",
-        "value": "postgresql://nitttinn:mypassword1234321@localhost:5432/postgres"
+        "fromEnvVar": null,
+        "value": "postgresql://nitttiinn:123454321@host.docker.internal:5432/nitttiinn"
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum UserRole {\n  USER\n  ADMIN\n}\n\nenum Difficulty {\n  EASY\n  MEDIUM\n  HARD\n}\n\nmodel User {\n  id                      String    @id @default(uuid())\n  name                    String\n  email                   String    @unique\n  image                   String?\n  role                    UserRole  @default(USER)\n  password                String\n  verificationToken       String?   @unique\n  verified                Boolean   @default(false)\n  verificationTokenExpiry DateTime?\n  createdAt               DateTime  @default(now())\n  updatedAt               DateTime  @updatedAt\n\n  // relationship\n  problems Problem[]\n}\n\nmodel Problem {\n  id                String     @id @default(uuid())\n  title             String\n  description       String\n  difficulty        Difficulty\n  tags              String[] // ['tag1', 'tag2', 'tag3']\n  userId            String\n  examples          Json\n  constraints       String\n  hints             String?\n  editorial         String?\n  testcases         Json\n  codeSnippets      Json // why Json? because it can be a String or an array of Strings?\n  referenceSolution Json\n  createdAt         DateTime   @default(now())\n  updatedAt         DateTime   @updatedAt\n\n  // relationship \n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n}\n",
-  "inlineSchemaHash": "fa41539bd56abf4a7f3ea354ceb11cbed51ff6e3a9b1e6e3c3e0f81bfbaee8a1",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = \"postgresql://nitttiinn:123454321@host.docker.internal:5432/nitttiinn\"\n}\n\nenum UserRole {\n  USER\n  ADMIN\n}\n\nenum Difficulty {\n  EASY\n  MEDIUM\n  HARD\n}\n\nmodel User {\n  id                      String    @id @default(uuid())\n  name                    String\n  email                   String    @unique\n  image                   String?\n  role                    UserRole  @default(USER)\n  password                String\n  verificationToken       String?   @unique\n  verified                Boolean   @default(false)\n  verificationTokenExpiry DateTime?\n  createdAt               DateTime  @default(now())\n  updatedAt               DateTime  @updatedAt\n\n  // relationship\n  problems Problem[]\n}\n\nmodel Problem {\n  id                String     @id @default(uuid())\n  title             String\n  description       String\n  difficulty        Difficulty\n  tags              String[] // ['tag1', 'tag2', 'tag3']\n  userId            String\n  examples          Json\n  constraints       String\n  hints             String?\n  editorial         String?\n  testcases         Json\n  codeSnippets      Json // why Json? because it can be a String or an array of Strings?\n  referenceSolution Json\n  createdAt         DateTime   @default(now())\n  updatedAt         DateTime   @updatedAt\n\n  // relationship \n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n}\n",
+  "inlineSchemaHash": "407fb1a3182b763cefad936769abb2097989d7f25c6e9132480dab7d52072dd7",
   "copyEngine": true
 }
 

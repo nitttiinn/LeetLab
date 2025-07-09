@@ -4,9 +4,8 @@
 */
 // importing the PrismaClient from the generated Prisma client
 import {PrismaClient} from '../generated/prisma/index.js';  
-// this is a workaround to avoid the multiple instances of PrismaClinet in development mode
 
-const globalForPrisma = globalThis;
+const globalForPrisma = globalThis; // Usecase: To ensure that the PrismaClient is a singleton in development mode, preventing multiple instances from being created.
 
 export const db = globalForPrisma.prisma || new PrismaClient();
 
